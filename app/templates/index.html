@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CarePath — Symptom Triage Wizard</title>
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>CarePath</h1>
+      <p class="subtitle">Rule-based Symptom Triage Wizard (Not Diagnosis)</p>
+      <div class="meta">
+        <span>ENV: <b>{{ env }}</b></span>
+        <span>VERSION: <b id="version">{{ version }}</b></span>
+      </div>
+      <p class="disclaimer">{{ disclaimer }}</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="progress">
+        <span id="stepLabel">Step 1/7</span>
+        <div class="bar"><div id="barFill"></div></div>
+      </div>
+
+      <div id="questionArea"></div>
+
+      <div class="actions">
+        <button id="backBtn" class="btn secondary" disabled>Back</button>
+        <button id="nextBtn" class="btn primary" disabled>Next</button>
+      </div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2>Result</h2>
+      <div class="result-row">
+        <div class="pill" id="categoryPill">—</div>
+        <div class="small" id="timestampText">—</div>
+      </div>
+
+      <h3>Why this result</h3>
+      <ul id="reasonsList"></ul>
+
+      <div class="divider"></div>
+
+      <p class="disclaimer small">{{ disclaimer }}</p>
+
+      <div class="actions">
+        <button id="restartBtn" class="btn secondary">Start over</button>
+        <button id="showHistoryBtn" class="btn secondary">Show history</button>
+      </div>
+
+      <div id="historyArea" class="hidden">
+        <h3>Recent results</h3>
+        <ul id="historyList"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <span class="small">CarePath — Demo project for CI/CD pipeline presentation.</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

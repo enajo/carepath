@@ -1,0 +1,80 @@
+name: CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/carepath
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.sha_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tags
+        id: meta
+        run: |
+          echo "sha_tag=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        run: |
+          docker build \
+            --build-arg APP_VERSION=${GITHUB_SHA} \
+            -t $IMAGE_NAME:${GITHUB_SHA} \
+            -t $IMAGE_NAME:latest \
+            .
+          docker push $IMAGE_NAME:${GITHUB_SHA}
+          docker push $IMAGE_NAME:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ build-and-push ]
+    steps:
+      - name: Deploy via SSH (docker compose pull/up)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            cd /opt/carepath
+
+            # Login so the server can pull from GHCR (use PAT with read:packages)
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+
+            # Pull latest and restart
+            docker compose pull
+            docker compose up -d
+
+            # Health check (retry)
+            for i in 1 2 3 4 5; do
+              if curl -fsS http://localhost:8000/health > /dev/null; then
+                echo "Health check OK"
+                exit 0
+              fi
+              echo "Health check failed, retrying..."
+              sleep 3
+            done
+
+            echo "Health check failed after retries"
+            docker compose logs --no-color --tail=200
+            exit 1

@@ -1,0 +1,16 @@
+services:
+  carepath:
+    # This is overridden by CD (GHCR image). Locally, Dockerfile build works.
+    build: .
+    image: carepath:local
+    container_name: carepath
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - carepath-data:/data
+    restart: unless-stopped
+
+volumes:
+  carepath-data:
