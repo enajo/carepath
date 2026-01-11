@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
 
-from .models import Duration, FeverTemp, MainSymptom, RiskFactor, Severity, TriageRequest
+from .models import Duration, FeverTemp, RiskFactor, TriageRequest
 
 
 DISCLAIMER = (
