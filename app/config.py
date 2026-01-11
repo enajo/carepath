@@ -11,7 +11,7 @@ def getenv(name: str, default: str) -> str:
 ENV: str = getenv("ENV", "dev")
 APP_VERSION: str = getenv("APP_VERSION", "local")
 
-HISTORY_PATH: str = getenv("HISTORY_PATH", "/data/history.jsonl")
+HISTORY_PATH: str = getenv("HISTORY_PATH", "history.jsonl")
 
 MAX_HISTORY_RAW = getenv("MAX_HISTORY", "30")
 try:
