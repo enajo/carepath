@@ -1,5 +1,11 @@
 from app.models import TriageRequest
-from app.rules import CATEGORY_EMERGENCY, CATEGORY_SELF, CATEGORY_SOON, CATEGORY_URGENT, evaluate
+from app.rules import (
+    CATEGORY_EMERGENCY,
+    CATEGORY_SELF,
+    CATEGORY_SOON,
+    CATEGORY_URGENT,
+    evaluate,
+)
 
 
 def test_emergency_red_flag():

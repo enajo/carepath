@@ -73,8 +73,13 @@ def evaluate(req: TriageRequest) -> RuleResult:
     if req.main_symptom == "chest_pain" and req.severity == "severe":
         return RuleResult(CATEGORY_EMERGENCY, ["Severe chest pain"])
 
-    if req.main_symptom == "breathing_trouble" and req.severity in ("moderate", "severe"):
-        return RuleResult(CATEGORY_EMERGENCY, ["Breathing trouble with moderate/severe severity"])
+    if req.main_symptom == "breathing_trouble" and req.severity in (
+        "moderate",
+        "severe",
+    ):
+        return RuleResult(
+            CATEGORY_EMERGENCY, ["Breathing trouble with moderate/severe severity"]
+        )
 
     # B) URGENT TODAY
     if req.severity == "severe":
@@ -87,10 +92,14 @@ def evaluate(req: TriageRequest) -> RuleResult:
 
         if ft in ("38_to_39_4", "39_5_or_more") and _has_any_high_risk(risk_factors):
             hr = ", ".join(RISK_LABELS[r] for r in risk_factors if r != "none")
-            return RuleResult(CATEGORY_URGENT, [f"Fever with high-risk condition(s): {hr}"])
+            return RuleResult(
+                CATEGORY_URGENT, [f"Fever with high-risk condition(s): {hr}"]
+            )
 
         if req.age_group == "under_2" and ft != "below_38" and ft != "none_or_unknown":
-            return RuleResult(CATEGORY_URGENT, ["Fever in very young child (conservative rule)"])
+            return RuleResult(
+                CATEGORY_URGENT, ["Fever in very young child (conservative rule)"]
+            )
 
     if req.duration == "more_3_days" and req.severity != "mild":
         return RuleResult(
@@ -107,13 +116,22 @@ def evaluate(req: TriageRequest) -> RuleResult:
 
     if _has_any_high_risk(risk_factors) and req.severity == "moderate":
         hr = ", ".join(RISK_LABELS[r] for r in risk_factors if r != "none")
-        return RuleResult(CATEGORY_SOON, [f"Moderate symptoms with high-risk condition(s): {hr}"])
+        return RuleResult(
+            CATEGORY_SOON, [f"Moderate symptoms with high-risk condition(s): {hr}"]
+        )
 
-    if req.main_symptom in ("abdominal_pain", "headache", "vomiting_diarrhea") and req.duration != "less_24h":
+    if (
+        req.main_symptom in ("abdominal_pain", "headache", "vomiting_diarrhea")
+        and req.duration != "less_24h"
+    ):
         return RuleResult(
             CATEGORY_SOON,
-            [f"{req.main_symptom.replace('_', ' ').title()} lasting {_duration_label(req.duration)}"],
+            [
+                f"{req.main_symptom.replace('_', ' ').title()} lasting {_duration_label(req.duration)}"
+            ],
         )
 
     # D) SELF-CARE / MONITOR
-    return RuleResult(CATEGORY_SELF, ["No red flags detected and overall risk appears low"])
+    return RuleResult(
+        CATEGORY_SELF, ["No red flags detected and overall risk appears low"]
+    )
