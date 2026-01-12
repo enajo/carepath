@@ -1,5 +1,13 @@
 # CarePath — Rule-based Symptom Triage Wizard (Not Diagnosis)
 
+```md
+![CI](https://github.com/enajo/carepath/actions/workflows/ci.yml/badge.svg)
+![CD](https://github.com/enajo/carepath/actions/workflows/cd.yml/badge.svg)
+
+**Live Demo:** http://130.162.244.205:8000  
+**Health:** http://130.162.244.205:8000/health
+
+
 CarePath is a small healthcare demo app that asks a short questionnaire and returns a conservative triage category:
 - Emergency now
 - Urgent today

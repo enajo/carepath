@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -24,6 +24,13 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "env": ENV, "version": APP_VERSION}
+
+
+@app.get("/favicon.ico")
+def favicon() -> Response:
+    # Avoid noisy 404s in logs from browsers and scanners.
+    # Returning 204 (No Content) is enough for this demo project.
+    return Response(status_code=204)
 
 
 @app.get("/", response_class=HTMLResponse)

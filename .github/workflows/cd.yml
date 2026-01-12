@@ -63,7 +63,9 @@ jobs:
             podman pull ghcr.io/${{ github.repository_owner }}/carepath:latest
 
             # Recreate container
-            podman rm -f carepath || true
+            podman stop -t 20 carepath || true
+            podman rm carepath || true
+
             podman run -d \
               --name carepath \
               --restart=always \
